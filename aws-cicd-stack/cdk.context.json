@@ -1,0 +1,6 @@
+{
+    "gitHubUser": "rajdurvasula",
+    "gitHubRepo": "aws-cdk-cicd1",
+    "gitHubTokenSecret": "/my/github/token",
+    "vpcCidr": "192.168.0.0/16"
+}
