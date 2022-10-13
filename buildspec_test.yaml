@@ -1,0 +1,22 @@
+version: 0.2
+
+phases:
+    install:
+        runtime-versions:
+            nodejs: 14
+    pre_build:
+        commands:
+            - cd ./testnode
+            - echo Installing npm dependencies ..
+            - npm install
+    build:
+        commands:
+            - aws ecr get-login-password --region $AWS_DEFAULT_REGION | docker login --username AWS --password-stdin $IMAGE_REPO_URI
+            - docker build -t testnode:$IMAGE_TAG .
+            - docker tag testnode:$IMAGE_TAG $IMAGE_REPO_URI:$IMAGE_TAG
+    post_build:
+        commands:
+            - docker push $IMAGE_REPO_URI:$IMAGE_TAG
+            - printf '[{"name":"my-app","imageUri":"%s"}]' $IMAGE_REPO_URI:$IMAGE_TAG > $CODEBUILD_SRC_DIR/imagedefinitions.json
+artifacts:
+    files: imagedefinitions.json
