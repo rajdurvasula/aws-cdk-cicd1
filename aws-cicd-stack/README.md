@@ -1,8 +1,15 @@
-# Welcome to your CDK TypeScript project
+# aws-cicd-stack
 
-This is a blank project for CDK development with TypeScript.
+This is a CDK TypeScript project comprising of 3 Stacks:
+- app-cdk-stack.ts
+- ecr-cdk-stack.ts
+- aws-cicd-stack-stack.ts
 
-The `cdk.json` file tells the CDK Toolkit how to execute your app.
+## Prerequisite Steps
+Refer to README.md in parent directory
+
+## Context Keys
+Refer to `cdk.context.json`
 
 ## Useful commands
 
