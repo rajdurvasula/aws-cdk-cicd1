@@ -40,7 +40,7 @@ export class AppCdkStack extends cdk.Stack {
             desiredCount: 1,
             taskImageOptions: {
                 image: ecs.ContainerImage.fromEcrRepository(props.ecrRepository),
-                containerName: `${id}-testnode`,
+                containerName: 'testnode',
                 containerPort: 8080
             }
         });
