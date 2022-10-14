@@ -17,9 +17,22 @@ app.use(express.urlencoded({ extended:  true }));
 var os = require("os");
 var hostname = os.hostname();
 
+let dateObj = new Date();
+let hours = dateObj.getHours();
+let greeting = "Hello !";
+if (hours > 0 && hours < 12) {
+    greeting += " Good Morning !!";
+} else if (hours > 12 && hours < 16) {
+    greeting += " Good Afternoon !!";
+} else if (hours > 16 && hours < 21) {
+    greeting += " Good Evening !!";
+} else if (hours > 21 && hours <= 23 ) {
+    greeting += " Good Night !!";
+}
+
 // default route
 app.get('/', (req, res) => {
-        res.json({message: `Welcome to sample node express - from - ${hostname}`});
+        res.json({message: `Welcome to sample node express - from - ${hostname}. ${greeting}`});
 });
 // listen port
 const PORT = process.env.PORT || 8080;
