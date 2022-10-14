@@ -30,7 +30,7 @@ export class AppCdkStack extends cdk.Stack {
             clusterName: `${id}EcsCluster`,
             vpc: this.appVpc
         });
-        /*
+
         // Fargate
         this.fargateService = new ecsPatterns.ApplicationLoadBalancedFargateService(this, `${id}FargateService`, {
             cluster: ecsCluster,
@@ -44,6 +44,5 @@ export class AppCdkStack extends cdk.Stack {
                 containerPort: 8080
             }
         });
-        */
     }
 }
