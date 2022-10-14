@@ -122,7 +122,7 @@ export class AwsCicdStackStack extends cdk.Stack {
         })
       ]
     });
-    
+    /*
     // Deploy to Test Env
     pipeline.addStage({
       stageName: 'deploy-test',
@@ -134,5 +134,6 @@ export class AwsCicdStackStack extends cdk.Stack {
         })
       ]
     });
+    */
   }
 }
