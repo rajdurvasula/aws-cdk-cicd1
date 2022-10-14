@@ -26,5 +26,6 @@ new AwsCicdStackStack(app, 'AwsCicdStackStack', {
   // env: { account: '123456789012', region: 'us-east-1' },
 
   /* For more information, see https://docs.aws.amazon.com/cdk/latest/guide/environments.html */
-  ecrRepository: ecrCdk.ecrRepository
+  ecrRepository: ecrCdk.ecrRepository,
+  testEnvFargateService: appCdk.fargateService
 });

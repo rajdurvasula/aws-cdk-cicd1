@@ -1,6 +1,8 @@
 import * as cdk from 'aws-cdk-lib';
 import * as ec2 from 'aws-cdk-lib/aws-ec2';
 import * as ecr from 'aws-cdk-lib/aws-ecr';
+import * as ecs from 'aws-cdk-lib/aws-ecs';
+import * as ecsPatterns from 'aws-cdk-lib/aws-ecs-patterns';
 import { Construct } from 'constructs';
 
 export interface AppCdkProps extends cdk.StackProps {
@@ -10,6 +12,7 @@ export interface AppCdkProps extends cdk.StackProps {
 export class AppCdkStack extends cdk.Stack {
     
     public readonly appVpc: ec2.Vpc;
+    public readonly fargateService: ecsPatterns.ApplicationLoadBalancedFargateService;
     
     constructor(scope: Construct, id: string, props: AppCdkProps) {
         super(scope, id, props);
@@ -20,6 +23,26 @@ export class AppCdkStack extends cdk.Stack {
             cidr: vpcCidr,
             natGateways: 1,
             maxAzs: 2
+        });
+        
+        // ECS Cluster
+        const ecsCluster = new ecs.Cluster(this, `${id}EcsCluster`, {
+            clusterName: `${id}EcsCluster`,
+            vpc: this.appVpc
+        });
+        
+        // Fargate
+        this.fargateService = new ecsPatterns.ApplicationLoadBalancedFargateService(this, `${id}FargateService`, {
+            cluster: ecsCluster,
+            publicLoadBalancer: true,
+            memoryLimitMiB: 1024,
+            cpu: 512,
+            desiredCount: 1,
+            taskImageOptions: {
+                image: ecs.ContainerImage.fromEcrRepository(props.ecrRepository),
+                containerName: `${id}-testnode`,
+                containerPort: 8080
+            }
         });
     }
 }

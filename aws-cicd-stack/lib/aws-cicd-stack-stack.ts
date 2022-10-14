@@ -3,12 +3,15 @@ import { Construct } from 'constructs';
 import * as iam from 'aws-cdk-lib/aws-iam';
 import * as ec2 from 'aws-cdk-lib/aws-ec2';
 import * as ecr from 'aws-cdk-lib/aws-ecr';
+import * as ecs from 'aws-cdk-lib/aws-ecs';
+import * as ecsPatterns from 'aws-cdk-lib/aws-ecs-patterns';
 import * as cbuild from 'aws-cdk-lib/aws-codebuild';
 import * as cpipeline from 'aws-cdk-lib/aws-codepipeline';
 import * as cpipeline_actions from 'aws-cdk-lib/aws-codepipeline-actions';
 
 export interface AwsCicdStackProps extends cdk.StackProps {
-  ecrRepository: ecr.Repository
+  ecrRepository: ecr.Repository,
+  testEnvFargateService: ecsPatterns.ApplicationLoadBalancedFargateService
 }
 
 export class AwsCicdStackStack extends cdk.Stack {
@@ -34,6 +37,7 @@ export class AwsCicdStackStack extends cdk.Stack {
     // artifacts
     const sourceArtifact = new cpipeline.Artifact();
     const dockerBuildOutput = new cpipeline.Artifact();
+    const testEnvOutput = new cpipeline.Artifact();
 
     //Build Project for Testing
     const testBuild = new cbuild.Project(this, 'test-node-build', {
@@ -88,6 +92,7 @@ export class AwsCicdStackStack extends cdk.Stack {
     });
     
     // Stages and Actions
+    // Get Source
     pipeline.addStage({
       stageName: 'get-source',
       actions: [
@@ -103,6 +108,7 @@ export class AwsCicdStackStack extends cdk.Stack {
       ]
     });
     
+    // Build and Push
     pipeline.addStage({
       stageName: 'test-build',
       actions: [
@@ -113,6 +119,18 @@ export class AwsCicdStackStack extends cdk.Stack {
           outputs: [
             dockerBuildOutput
           ]
+        })
+      ]
+    });
+    
+    // Deploy to Test Env
+    pipeline.addStage({
+      stageName: 'deploy-test',
+      actions: [
+        new cpipeline_actions.EcsDeployAction({
+          actionName: 'deploy-test-ecs',
+          service: props.testEnvFargateService.service,
+          input: dockerBuildOutput
         })
       ]
     });
